@@ -30,6 +30,7 @@ import io.reactivex.Flowable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.processors.PublishProcessor
+import mu.KotlinLogging
 import java.util.concurrent.TimeUnit
 
 internal class Connection(
@@ -57,22 +58,28 @@ internal class Connection(
         val state: State
             get() = stateMachine.state
 
+        private val logger = KotlinLogging.logger { }
+
         private val lifecycleStateSubscriber = LifecycleStateSubscriber(this)
         private val eventProcessor = PublishProcessor.create<Event>()
         private val stateMachine = StateMachine.create<State, Event> {
             state<Disconnected> {
                 onEnter {
+                    logger.info { "disconnected onEnter" }
                     requestNextLifecycleState()
                 }
                 on(lifecycleStart()) transitionTo {
+                    logger.info { "disconnected on(lifecyleStart())" }
                     val webSocketSession = open()
                     Connecting(session = webSocketSession, retryCount = 0)
                 }
                 on(lifecycleStop()) run {
+                    logger.info { "disconnected on(lifecyleStop())" }
                     // No-op
                     requestNextLifecycleState()
                 }
                 on<OnLifecycle.Terminate>() transitionTo {
+                    logger.info { "disconnected onTerminate" }
                     Destroyed
                 }
             }
@@ -81,6 +88,7 @@ internal class Connection(
                     requestNextLifecycleState()
                 }
                 on<OnRetry>() transitionTo {
+                    logger.info { "WaitingToRetry onOnRetry" }
                     val webSocketSession = open()
                     Connecting(session = webSocketSession, retryCount = retryCount + 1)
                 }

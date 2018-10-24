@@ -50,6 +50,8 @@ ext {
     timber = 'com.jakewharton.timber:timber:4.6.0'
     okSse = 'com.github.heremaps:oksse:0.9.0'
 
+    kotlinLogging = "io.github.microutils:kotlin-logging:1.4.9"
+
     junit = 'junit:junit:4.12'
     mockito = 'com.nhaarman:mockito-kotlin-kt1.1:1.6.0'
     assertJ = 'org.assertj:assertj-core:3.8.0'

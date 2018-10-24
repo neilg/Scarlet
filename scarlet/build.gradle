@@ -13,6 +13,7 @@ dependencies {
     implementation rootProject.ext.rxJava
     implementation rootProject.ext.rxKotlin
     implementation rootProject.ext.kotlinStdlib
+    implementation rootProject.ext.kotlinLogging
 
     testImplementation project(':scarlet-test-utils')
     testImplementation project(':scarlet-stream-adapter-rxjava2')
