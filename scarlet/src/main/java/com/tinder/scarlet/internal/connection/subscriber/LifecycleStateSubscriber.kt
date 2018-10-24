@@ -20,7 +20,7 @@ internal class LifecycleStateSubscriber(
     override fun onNext(lifecycleState: Lifecycle.State) {
         val value = pendingRequestCount.decrementAndGet()
         if (value < 0) {
-            pendingRequestCount.set(0)
+            pendingRequestCount.compareAndSet(value, 0)
         }
         stateManager.handleEvent(Event.OnLifecycle.StateChange(lifecycleState))
     }
@@ -31,8 +31,8 @@ internal class LifecycleStateSubscriber(
 
     fun requestNext() {
         if (pendingRequestCount.get() == 0) {
-            pendingRequestCount.incrementAndGet()
-            request(1)
+            if (pendingRequestCount.compareAndSet(0, 1))
+                request(1)
         }
     }
 }
